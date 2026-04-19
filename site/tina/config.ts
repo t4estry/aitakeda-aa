@@ -6,16 +6,19 @@ import { defineConfig } from 'tinacms';
  * 表示順は使用頻度順（News → Works → Top → Profile → Products → Services → Process → Site）
  */
 
+// ブランチ自動検出（Cloudflare Pages / Vercel / GitHub Actions / ローカル）
 const branch =
   process.env.GITHUB_BRANCH ||
   process.env.VERCEL_GIT_COMMIT_REF ||
+  process.env.CF_PAGES_BRANCH ||
   process.env.HEAD ||
   'main';
 
 export default defineConfig({
   branch,
 
-  // Tina Cloud 接続用（未使用。self-hosted/localhost 運用を想定）
+  // Tina Cloud 接続用認証情報（環境変数経由で設定）
+  // ローカル: site/.env、本番: Cloudflare Pages の環境変数
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID ?? '',
   token: process.env.TINA_TOKEN ?? '',
 

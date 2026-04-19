@@ -1,0 +1,273 @@
+---
+/**
+ * ContactForm — 問い合わせフォーム
+ * Apps Script Web App に fetch で POST し、メール2通＋スプシ記録を行う。
+ * reCAPTCHA v3 + honeypot でスパム対策、CORS 回避に text/plain 送信。
+ */
+import Button from './Button.astro';
+import { SITE } from '../../config/site';
+
+const endpoint = SITE.contactEndpoint;
+const siteKey = SITE.recaptchaSiteKey;
+---
+
+<form
+  class="grid gap-8 max-w-2xl"
+  data-component="ContactForm"
+  novalidate
+>
+  {/* honeypot — 人には見えず bot は記入しがち */}
+  <div class="sr-only" aria-hidden="true">
+    <label>
+      Website（入力しないでください）
+      <input type="text" name="website" tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-8">
+    <label class="block">
+      <span class="block font-[var(--font-caption-en)] text-xs tracking-[0.2em] uppercase text-ink/70">
+        お名前 <span class="text-ember">*</span>
+      </span>
+      <input
+        type="text"
+        name="name"
+        required
+        class="mt-3 w-full bg-transparent border-b border-fog py-3 text-base focus:border-moss focus:outline-none transition-colors"
+      />
+    </label>
+    <label class="block">
+      <span class="block font-[var(--font-caption-en)] text-xs tracking-[0.2em] uppercase text-ink/70">
+        会社名・ご所属 <span class="text-ember">*</span>
+      </span>
+      <input
+        type="text"
+        name="company"
+        required
+        class="mt-3 w-full bg-transparent border-b border-fog py-3 text-base focus:border-moss focus:outline-none transition-colors"
+      />
+    </label>
+  </div>
+
+  <label class="block">
+    <span class="block font-[var(--font-caption-en)] text-xs tracking-[0.2em] uppercase text-ink/70">
+      メールアドレス <span class="text-ember">*</span>
+    </span>
+    <input
+      type="email"
+      name="email"
+      required
+      class="mt-3 w-full bg-transparent border-b border-fog py-3 text-base focus:border-moss focus:outline-none transition-colors"
+    />
+  </label>
+
+  <fieldset class="block">
+    <legend class="block font-[var(--font-caption-en)] text-xs tracking-[0.2em] uppercase text-ink/70">
+      ご相談内容のカテゴリ <span class="text-ember">*</span>
+    </legend>
+    <div class="mt-4 flex flex-wrap gap-4">
+      {[
+        ['space', '空間香（法人）'],
+        ['product', '商品開発'],
+        ['lecture', '講演・執筆'],
+        ['other', 'その他'],
+      ].map(([value, label]) => (
+        <label class="inline-flex items-center gap-2 cursor-pointer group">
+          <input
+            type="radio"
+            name="category"
+            value={value}
+            required
+            class="sr-only peer"
+          />
+          <span class="inline-block w-3 h-3 rounded-full border border-ink/40 peer-checked:bg-moss peer-checked:border-moss transition-colors" />
+          <span class="text-sm group-hover:text-moss transition-colors">
+            {label}
+          </span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <label class="block">
+    <span class="block font-[var(--font-caption-en)] text-xs tracking-[0.2em] uppercase text-ink/70">
+      ご相談内容 <span class="text-ember">*</span>
+    </span>
+    <textarea
+      name="message"
+      rows="6"
+      required
+      class="mt-3 w-full bg-transparent border-b border-fog py-3 text-base leading-[1.8] focus:border-moss focus:outline-none transition-colors resize-none"
+    ></textarea>
+  </label>
+
+  {/* 状態表示（送信成功 / 失敗） */}
+  <div
+    data-status
+    class="hidden border-l-2 pl-4 py-2 text-sm leading-[1.8]"
+    role="status"
+    aria-live="polite"
+  >
+  </div>
+
+  <p class="text-xs text-ink/50 leading-[1.8]">
+    ※ いただいた内容は、お問い合わせ対応のみに使用します。<br />
+    3営業日以内にご返信いたします。
+  </p>
+
+  <p class="text-[11px] text-ink/40 leading-[1.7]">
+    このフォームは reCAPTCHA で保護されています。Google の
+    <a
+      href="https://policies.google.com/privacy"
+      target="_blank"
+      rel="noopener"
+      class="underline hover:text-moss"
+    >プライバシー ポリシー</a>
+    と
+    <a
+      href="https://policies.google.com/terms"
+      target="_blank"
+      rel="noopener"
+      class="underline hover:text-moss"
+    >利用規約</a>
+    が適用されます。
+  </p>
+
+  <div class="pt-4">
+    <Button type="submit" variant="primary" size="lg">
+      送信する
+    </Button>
+  </div>
+</form>
+
+<script is:inline define:vars={{ endpoint, siteKey }}>
+  (() => {
+    // reCAPTCHA v3 スクリプトを動的ロード
+    if (!document.querySelector('script[data-recaptcha]')) {
+      const s = document.createElement('script');
+      s.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+      s.async = true;
+      s.defer = true;
+      s.setAttribute('data-recaptcha', 'true');
+      document.head.appendChild(s);
+    }
+
+    const form = document.querySelector('[data-component="ContactForm"]');
+    if (!form) return;
+    const statusEl = form.querySelector('[data-status]');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const SUBMIT_DEFAULT = submitBtn ? submitBtn.textContent : '送信する';
+
+    function setStatus(kind, text) {
+      if (!statusEl) return;
+      statusEl.classList.remove('hidden');
+      if (kind === 'success') {
+        statusEl.className =
+          'border-l-2 border-moss pl-4 py-2 text-sm leading-[1.8] text-moss';
+      } else if (kind === 'error') {
+        statusEl.className =
+          'border-l-2 border-ember pl-4 py-2 text-sm leading-[1.8] text-ember';
+      } else {
+        statusEl.className =
+          'border-l-2 border-ink/30 pl-4 py-2 text-sm leading-[1.8] text-ink/70';
+      }
+      statusEl.textContent = text;
+    }
+
+    function setBusy(busy) {
+      if (!submitBtn) return;
+      submitBtn.disabled = busy;
+      submitBtn.textContent = busy ? '送信中…' : SUBMIT_DEFAULT;
+    }
+
+    async function getRecaptchaToken() {
+      return new Promise((resolve, reject) => {
+        if (typeof grecaptcha === 'undefined') {
+          return reject(new Error('recaptcha_not_loaded'));
+        }
+        grecaptcha.ready(async () => {
+          try {
+            const token = await grecaptcha.execute(siteKey, {
+              action: 'contact_submit',
+            });
+            resolve(token);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setStatus('info', '送信準備中…');
+      setBusy(true);
+
+      try {
+        // HTML5 ネイティブ検証
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          setStatus('error', '未入力の項目があります。内容をご確認ください。');
+          return;
+        }
+
+        // reCAPTCHA トークン取得
+        const token = await getRecaptchaToken();
+
+        const fd = new FormData(form);
+        const payload = {
+          name: (fd.get('name') || '').toString().trim(),
+          company: (fd.get('company') || '').toString().trim(),
+          email: (fd.get('email') || '').toString().trim(),
+          category: (fd.get('category') || '').toString(),
+          message: (fd.get('message') || '').toString().trim(),
+          website: (fd.get('website') || '').toString(), // honeypot
+          recaptchaToken: token,
+        };
+
+        // Apps Script Web App に POST
+        // Content-Type text/plain で CORS プリフライトを回避
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          throw new Error(`http_${res.status}`);
+        }
+
+        const result = await res.json();
+
+        if (result.ok) {
+          form.reset();
+          setStatus(
+            'success',
+            'お問い合わせを受け付けました。自動返信メールをお送りしましたのでご確認ください。'
+          );
+        } else {
+          const errorMap = {
+            missing_field: '未入力の項目があります。内容をご確認ください。',
+            invalid_email: 'メールアドレスの形式をご確認ください。',
+            message_too_long: '本文が長すぎます。5000文字以内に収めてください。',
+            recaptcha_verify_failed:
+              'スパム検証でエラーが発生しました。ページを再読み込みしてお試しください。',
+            recaptcha_low_score:
+              'スパム検証でブロックされました。お手数ですが時間をおいて再度お試しください。',
+            mail_send_failed:
+              '送信処理中にエラーが発生しました。時間をおいて再度お試しください。',
+          };
+          setStatus('error', errorMap[result.error] || '送信に失敗しました。');
+        }
+      } catch (err) {
+        console.error('ContactForm submit error:', err);
+        setStatus(
+          'error',
+          '送信に失敗しました。ネットワーク環境を確認のうえ再度お試しください。'
+        );
+      } finally {
+        setBusy(false);
+      }
+    });
+  })();
+</script>

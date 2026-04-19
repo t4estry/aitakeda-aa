@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import { SITE } from '../../config/site';
+
+const settings = (await getCollection('siteSettings'))[0].data;
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-ink text-paper">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-24 md:py-28 grid md:grid-cols-3 gap-12">
+    <div>
+      <p class="font-[var(--font-caption-en)] text-sm tracking-[0.35em] uppercase font-medium">
+        {settings.brandName}
+      </p>
+      <p class="mt-5 font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-ember">
+        {settings.tagline}
+      </p>
+    </div>
+    <div class="text-sm leading-[2]">
+      <p>{settings.legalName}</p>
+      {settings.locationLabel && <p class="text-paper/60">{settings.locationLabel}</p>}
+    </div>
+    <div class="text-sm leading-[2] space-y-2">
+      <a
+        href={SITE.external.parentSite}
+        class="block text-paper/80 hover:text-ember transition-colors"
+        target="_blank"
+        rel="noopener"
+      >
+        武田林業公式サイト →
+      </a>
+      <a
+        href={SITE.external.storeSite}
+        class="block text-paper/80 hover:text-ember transition-colors"
+        target="_blank"
+        rel="noopener"
+      >
+        オンラインストア →
+      </a>
+      {settings.instagramUrl && (
+        <a
+          href={settings.instagramUrl}
+          class="block text-paper/80 hover:text-ember transition-colors"
+          target="_blank"
+          rel="noopener"
+        >
+          Instagram →
+        </a>
+      )}
+    </div>
+  </div>
+  <div class="border-t border-paper/15">
+    <p class="mx-auto max-w-[1440px] px-4 md:px-24 py-6 font-[var(--font-caption-en)] text-[11px] text-paper/50 tracking-[0.2em]">
+      © {year} {settings.brandName} / TAKEDA RINGYO Inc.
+    </p>
+  </div>
+</footer>

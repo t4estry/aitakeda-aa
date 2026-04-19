@@ -1,0 +1,97 @@
+---
+/**
+ * ProcessFlow — フェーズデザイン（番号ノード + コネクトライン）
+ * - PC (lg+): 水平フロー。横ラインが円ノードを貫通する構成
+ * - SP/Tablet: 垂直フロー。左側の縦ラインに円ノードが並ぶ構成
+ * - ongoing: true のステップは塗りノード（moss）で、納品後の継続フェーズを示唆
+ */
+interface Step {
+  number: string; // "01" ...
+  labelEn: string;
+  title: string;
+  body: string;
+  ongoing?: boolean;
+}
+interface Props {
+  steps: Step[];
+  durationLabel?: string;
+  label?: string;
+  heading?: string;
+}
+
+const {
+  steps,
+  durationLabel,
+  label = 'PROCESS',
+  heading = 'プロジェクトの進め方。',
+} = Astro.props;
+---
+
+<div class="mt-32" data-component="ProcessFlow">
+  <header class="mb-14 md:mb-20">
+    <p class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-moss">
+      {label}
+    </p>
+    <h3 class="mt-5 font-[var(--font-display-jp)] text-2xl md:text-4xl leading-[1.5] tracking-tight">
+      {heading}
+    </h3>
+  </header>
+
+  <div class="relative">
+    <!-- PC 用：水平コネクトライン -->
+    <div
+      aria-hidden="true"
+      class="hidden lg:block absolute top-6 left-[calc(100%/12)] right-[calc(100%/12)] h-px bg-ink/25"
+    >
+    </div>
+    <!-- SP/Tablet 用：垂直コネクトライン -->
+    <div
+      aria-hidden="true"
+      class="lg:hidden absolute top-6 bottom-20 left-6 w-px bg-ink/25"
+    >
+    </div>
+
+    <ol
+      class="relative grid grid-cols-1 lg:grid-cols-6 gap-y-10 lg:gap-y-0 lg:gap-x-4"
+    >
+      {
+        steps.map((step) => (
+          <li class="relative flex lg:flex-col items-start gap-6 lg:gap-0 lg:items-center lg:text-center">
+            {/* 番号ノード */}
+            <div
+              class:list={[
+                'relative z-10 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-[var(--font-caption-en)] text-[13px] tracking-[0.15em] transition-colors',
+                step.ongoing
+                  ? 'bg-moss text-paper'
+                  : 'bg-paper-alt border border-ink/70 text-ink',
+              ]}
+            >
+              {step.number}
+            </div>
+
+            {/* テキスト部 */}
+            <div class="flex-1 lg:mt-7 lg:px-2">
+              <p class="font-[var(--font-caption-en)] text-[10px] md:text-[11px] tracking-[0.3em] uppercase text-ember">
+                {step.labelEn}
+              </p>
+              <h4 class="mt-2 font-[var(--font-display-jp)] text-xl lg:text-lg leading-[1.5]">
+                {step.title}
+              </h4>
+              <p class="mt-3 font-[var(--font-sans-jp)] text-[13px] leading-[1.9] text-ink/75 lg:text-[12px] lg:leading-[1.8]">
+                {step.body}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  {
+    durationLabel && (
+      <p class="mt-16 font-[var(--font-caption-en)] text-[11px] tracking-[0.3em] uppercase text-ink/50">
+        ─ {durationLabel}
+      </p>
+    )
+  }
+</div>

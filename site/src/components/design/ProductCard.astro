@@ -1,0 +1,44 @@
+---
+interface Props {
+  image: string;
+  name: string;
+  nameEn?: string;
+  volume: string;
+  price: string;
+  externalUrl: string;
+}
+const { image, name, nameEn, volume, price, externalUrl } = Astro.props;
+---
+
+<article class="border-t border-fog pt-8">
+  <div class="aspect-square overflow-hidden bg-paper">
+    <img
+      src={image}
+      alt={name}
+      loading="lazy"
+      class="w-full h-full object-contain"
+    />
+  </div>
+  <div class="mt-6">
+    {nameEn && (
+      <p class="font-[var(--font-caption-en)] text-[10px] tracking-[0.3em] uppercase text-ember">
+        {nameEn}
+      </p>
+    )}
+    <h3 class="mt-2 font-[var(--font-display-jp)] text-xl leading-[1.4]">
+      {name}
+    </h3>
+    <div class="mt-4 flex items-baseline justify-between text-sm text-ink/70">
+      <span class="font-[var(--font-caption-en)] tracking-wider">{volume}</span>
+      <span class="font-[var(--font-caption-en)] text-ink">{price}</span>
+    </div>
+    <a
+      href={externalUrl}
+      target="_blank"
+      rel="noopener"
+      class="mt-6 inline-block font-[var(--font-caption-en)] text-xs tracking-[0.3em] uppercase border-b border-ink pb-1 hover:text-moss hover:border-moss transition-colors"
+    >
+      STORE で見る →
+    </a>
+  </div>
+</article>

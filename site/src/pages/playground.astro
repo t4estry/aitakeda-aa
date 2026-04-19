@@ -1,0 +1,165 @@
+---
+/**
+ * Phase 2: デザインシステム検証ページ
+ * 7コンポーネント（Nav / Hero / SectionHeader / ServiceCard / WorkCard / ProductCard / Footer）を
+ * 一覧表示して目視確認する。実データ置換は Phase 3-4 で対応。
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/design/Nav.astro';
+import Footer from '../components/design/Footer.astro';
+import Hero from '../components/design/Hero.astro';
+import SectionHeader from '../components/design/SectionHeader.astro';
+import ServiceCard from '../components/design/ServiceCard.astro';
+import WorkCard from '../components/design/WorkCard.astro';
+import ProductCard from '../components/design/ProductCard.astro';
+import { SITE } from '../config/site';
+
+const navLinks = [
+  { label: 'About', href: '#about' },
+  { label: 'Service', href: '#service' },
+  { label: 'Works', href: '#works' },
+  { label: 'Products', href: '#products' },
+  { label: 'News', href: '#news' },
+  { label: 'Contact', href: '#contact' },
+];
+
+const services = [
+  {
+    number: '01',
+    labelEn: 'ORIGINAL BLEND FOR BUSINESS',
+    title: '法人向けオリジナル調香',
+    body: 'ホテル・オフィス・店舗・ブランドのためのオリジナル香調設計。空間コンセプトやブランド体験に合わせて、愛媛・内子の精油を軸に香りを組みます。',
+    primary: true,
+  },
+  {
+    number: '02',
+    labelEn: 'SPACE DESIGN',
+    title: '空間演出',
+    body: 'イベント、展示会、結婚式等の一時的な空間のための香り設計。',
+  },
+  {
+    number: '03',
+    labelEn: 'PRODUCT DEVELOPMENT',
+    title: '商品開発支援',
+    body: '香り製品・ノベルティ・アメニティのOEM／ODM調香。',
+  },
+  {
+    number: '04',
+    labelEn: 'LECTURE',
+    title: '講演・ワークショップ',
+    body: '林業×調香のテーマでの講演、企業研修、地域イベントでの体験会。',
+  },
+  {
+    number: '05',
+    labelEn: 'WRITING',
+    title: '執筆・監修',
+    body: 'メディア寄稿、記事監修、ブランドストーリー開発。',
+  },
+];
+
+const works = [
+  {
+    cover: 'https://picsum.photos/seed/work1/800/1000?grayscale',
+    category: '空間香',
+    title: 'ホテル客室向けの香り',
+    client: 'Client A（匿名）',
+    year: '2025',
+    summary: '森林浴の追体験を目指した客室向け空間香の設計。',
+  },
+  {
+    cover: 'https://picsum.photos/seed/work2/800/1000?grayscale',
+    category: '商品香',
+    title: 'ブランドフレグランスOEM',
+    client: 'Client B（匿名）',
+    year: '2025',
+    summary: '化粧品ブランドのシグネチャー香の開発。',
+  },
+  {
+    cover: 'https://picsum.photos/seed/work3/800/1000?grayscale',
+    category: '講演',
+    title: '地域林業セミナー',
+    client: '内子町',
+    year: '2024',
+    summary: '内子町での林業×香りのトークと体験会。',
+  },
+];
+
+const products = [
+  {
+    image: 'https://picsum.photos/seed/prod1/600/600?grayscale',
+    name: 'ANTOKINO HINOKI',
+    nameEn: 'ROOM SPRAY',
+    volume: '150ml',
+    price: '¥1,980',
+    externalUrl: 'https://4est.co.jp/',
+  },
+  {
+    image: 'https://picsum.photos/seed/prod2/600/600?grayscale',
+    name: 'cucunoci kuromoji',
+    nameEn: 'ROOM FRAGRANCE',
+    volume: '60ml',
+    price: '¥3,850',
+    externalUrl: 'https://4est.co.jp/',
+  },
+  {
+    image: 'https://picsum.photos/seed/prod3/600/600?grayscale',
+    name: 'ヒノキカードスプレー',
+    nameEn: 'CARD SPRAY',
+    volume: '15ml',
+    price: '¥924',
+    externalUrl: 'https://4est.co.jp/',
+  },
+  {
+    image: 'https://picsum.photos/seed/prod4/600/600?grayscale',
+    name: 'クロモジ和製ヴィヒタ',
+    nameEn: 'VIHTA',
+    volume: '30×20cm',
+    price: '¥1,980',
+    externalUrl: 'https://4est.co.jp/',
+  },
+];
+---
+
+<BaseLayout title="Playground" description="Phase 2 design component catalog">
+  <Nav brandName={SITE.brandNameEn} links={navLinks} />
+
+  <main>
+    <Hero
+      tagline={SITE.tagline}
+      headline={'森の呼吸を、\n調香する。'}
+      sub={'愛媛・内子の山から、\n未利用の枝葉を蒸留し、香りに変える。\n調香師 武田愛の、森から始まる設計。'}
+    />
+
+    <section id="service" class="mx-auto max-w-[1440px] px-4 md:px-24 py-48">
+      <SectionHeader
+        label="SERVICE"
+        heading="香りで、空間とブランドを設計する。"
+      />
+      <div class="grid md:grid-cols-2 gap-16">
+        {services.map((s) => <ServiceCard {...s} />)}
+      </div>
+    </section>
+
+    <section id="works" class="mx-auto max-w-[1440px] px-4 md:px-24 py-48">
+      <SectionHeader label="WORKS" heading="これまでの調香。" />
+      <div class="grid md:grid-cols-3 gap-10">
+        {works.map((w) => <WorkCard {...w} />)}
+      </div>
+    </section>
+
+    <section
+      id="products"
+      class="mx-auto max-w-[1440px] px-4 md:px-24 py-48"
+    >
+      <SectionHeader
+        label="PRODUCTS"
+        heading="森の香りを、手の届くかたちに。"
+      />
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
+        {products.map((p) => <ProductCard {...p} />)}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

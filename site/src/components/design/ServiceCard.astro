@@ -1,0 +1,28 @@
+---
+interface Props {
+  number: string; // "01" / "02"
+  labelEn: string; // ORIGINAL BLEND FOR BUSINESS
+  title: string; // 法人向けオリジナル調香
+  body: string;
+  primary?: boolean; // 主軸サービスは大きく
+}
+const { number, labelEn, title, body, primary = false } = Astro.props;
+---
+
+<article
+  class={`border-t ${primary ? 'border-ink' : 'border-fog'} pt-8 ${primary ? 'md:col-span-2 pb-8' : ''}`}
+>
+  <div class="flex items-baseline gap-4 font-[var(--font-caption-en)] text-xs tracking-[0.3em] uppercase">
+    <span class="text-ember">SERVICE {number}</span>
+    <span class="text-fog">／</span>
+    <span class="text-ink/70">{labelEn}</span>
+  </div>
+  <h3
+    class={`mt-6 font-[var(--font-display-jp)] leading-[1.4] ${primary ? 'text-4xl md:text-6xl' : 'text-2xl md:text-4xl'}`}
+  >
+    {title}
+  </h3>
+  <p class={`mt-6 leading-[2] ${primary ? 'max-w-2xl text-base md:text-lg' : 'text-base'}`}>
+    {body}
+  </p>
+</article>

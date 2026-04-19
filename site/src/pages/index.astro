@@ -1,0 +1,336 @@
+---
+/**
+ * Top（長尺1枚）— Phase 5b-3
+ * すべてのテキスト・データを content collection から取得する構成に刷新。
+ * 武田愛さんは TinaCMS 管理画面で全セクションを編集可能。
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/design/Nav.astro';
+import Footer from '../components/design/Footer.astro';
+import Hero from '../components/design/Hero.astro';
+import SectionHeader from '../components/design/SectionHeader.astro';
+import ServiceCard from '../components/design/ServiceCard.astro';
+import WorkCard from '../components/design/WorkCard.astro';
+import ProductCard from '../components/design/ProductCard.astro';
+import ProcessFlow from '../components/design/ProcessFlow.astro';
+import Carousel from '../components/design/Carousel.astro';
+import Button from '../components/design/Button.astro';
+import ContactForm from '../components/design/ContactForm.astro';
+import { SITE } from '../config/site';
+
+// === 単一ドキュメント（1ファイルのみ置くコレクションの第1要素を取得）===
+const site = (await getCollection('siteSettings'))[0].data;
+const home = (await getCollection('home'))[0].data;
+const profile = (await getCollection('profile'))[0].data;
+
+// === コレクション（order 昇順）===
+const services = (await getCollection('services'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((e) => e.data);
+const processSteps = (await getCollection('processSteps'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((e) => e.data);
+const products = (await getCollection('products'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((e) => e.data);
+
+// === Works 抜粋（最新3件）===
+const works = (await getCollection('works'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3)
+  .map((w) => ({
+    cover: w.data.cover,
+    category: w.data.category,
+    title: w.data.title,
+    client: w.data.client,
+    year: w.data.year,
+    summary: w.data.summary,
+    href: `/works/${w.id}`,
+  }));
+
+// === News 抜粋（最新3件）===
+const formatNewsDate = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+
+const newsItems = (await getCollection('news'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3)
+  .map((n) => ({
+    date: formatNewsDate(n.data.date),
+    title: n.data.title,
+    href: `/news/${n.id}`,
+  }));
+
+// === Nav 項目は固定（編集対象外）===
+const navLinks = [
+  { label: 'About', href: '#about' },
+  { label: 'Service', href: '#service' },
+  { label: 'Works', href: '#works' },
+  { label: 'Products', href: '#products' },
+  { label: 'Contact', href: '#contact' },
+];
+---
+
+<BaseLayout>
+  <Nav brandName={site.brandName} links={navLinks} overlay={true} />
+
+  <main>
+    <!-- Hero（背景画像＋オーバーレイ） -->
+    <Hero
+      tagline={home.hero.tagline}
+      headline={home.hero.headline}
+      sub={home.hero.sub}
+      backgroundImage={home.hero.backgroundImage}
+      overlay={home.hero.overlay}
+    />
+
+    <!-- Philosophy（paper-alt 背景でリズム付与） -->
+    <section id="philosophy" class="bg-paper-alt">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-32 md:py-40">
+        <SectionHeader label="PHILOSOPHY" heading={home.philosophy.heading} />
+        <div class="grid md:grid-cols-12 gap-12">
+          <div class="md:col-span-7 md:col-start-4 space-y-8 md:space-y-10">
+            {
+              home.philosophy.paragraphs.map((p) => (
+                <p class="text-[15px] md:text-base leading-[2.2]">{p}</p>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile — 画像を右端フラッシュにブリードアウト -->
+    <section id="about" class="bg-paper overflow-hidden">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-32 md:py-40">
+        <SectionHeader label="PROFILE" heading={profile.name} />
+        <div class="grid md:grid-cols-12 gap-12">
+          <div
+            class="md:col-span-5 md:col-start-8 md:row-start-1 md:mr-[calc((100vw-min(100vw,1440px))/-2-6rem)]"
+          >
+            <div class="aspect-[3/4] bg-fog overflow-hidden">
+              {
+                profile.portrait && (
+                  <img
+                    src={profile.portrait}
+                    alt={profile.name}
+                    loading="lazy"
+                    class="w-full h-full object-cover"
+                  />
+                )
+              }
+            </div>
+            {
+              profile.portraitNote && (
+                <p class="mt-4 md:pr-4 font-[var(--font-caption-en)] text-[10px] tracking-[0.3em] uppercase text-mist">
+                  {profile.portraitNote}
+                </p>
+              )
+            }
+          </div>
+          <div
+            class="md:col-span-5 md:col-start-1 md:row-start-1 md:pr-4 max-w-xl"
+          >
+            <p
+              class="font-[var(--font-caption-en)] text-sm tracking-[0.35em] uppercase font-medium"
+            >
+              {profile.nameEn}
+            </p>
+            <p
+              class="mt-2 font-[var(--font-sans-jp)] text-xs tracking-wider text-ink/60"
+            >
+              {profile.jobTitle}
+            </p>
+            <div
+              class="mt-10 space-y-6 leading-[2.2] text-[15px] md:text-base"
+            >
+              {profile.bioParagraphs.map((p) => <p>{p}</p>)}
+            </div>
+
+            <dl class="mt-12 border-t border-fog divide-y divide-fog">
+              {
+                profile.career.map((c) => (
+                  <div class="grid grid-cols-[auto,1fr] gap-8 py-5">
+                    <dt class="font-[var(--font-caption-en)] text-[11px] tracking-[0.25em] uppercase text-ember">
+                      {c.year}
+                    </dt>
+                    <dd class="font-[var(--font-sans-jp)] text-sm leading-[1.8]">
+                      {c.text}
+                    </dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service -->
+    <section id="service" class="bg-paper-alt">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-32 md:py-40">
+        <SectionHeader
+          label="SERVICE"
+          heading={home.service.heading}
+          number={home.service.number}
+        />
+        <div class="grid md:grid-cols-2 gap-16">
+          {services.map((s) => <ServiceCard {...s} />)}
+        </div>
+
+        <ProcessFlow
+          steps={processSteps}
+          label="PROCESS"
+          heading={home.process.heading}
+          durationLabel={home.process.durationLabel}
+        />
+
+        <div class="mt-20 flex justify-center">
+          <Button href="#contact" variant="primary" size="lg">
+            相談する
+          </Button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Works 抜粋（Carousel） -->
+    <section id="works" class="bg-paper">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-32 md:py-40">
+        <SectionHeader label="WORKS" heading={home.works.heading} />
+        <Carousel label="事例カルーセル" buttonTop="38%">
+          {
+            works.map((w) => (
+              <div class="carousel-item w-[85%] sm:w-[65%] md:w-[calc((100%-1.25rem)/2)] lg:w-[85%]">
+                <WorkCard
+                  {...w}
+                  coverAspect="aspect-[3/4] md:aspect-[5/4]"
+                />
+              </div>
+            ))
+          }
+        </Carousel>
+        <div class="mt-12 md:mt-16 flex justify-center">
+          <Button href="/works" variant="text">
+            すべての事例を見る →
+          </Button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Forest Backbone（反転配色） -->
+    <section class="bg-ink text-paper">
+      <div
+        class="mx-auto max-w-[1440px] px-4 md:px-24 py-32 md:py-40 grid md:grid-cols-12 gap-12"
+      >
+        <div class="md:col-span-6">
+          <p
+            class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-ember"
+          >
+            FROM THE FOREST
+          </p>
+          <h2
+            class="mt-5 font-[var(--font-display-jp)] text-3xl md:text-5xl leading-[1.5] whitespace-pre-line"
+          >
+            {home.forest.heading}
+          </h2>
+        </div>
+        <div
+          class="md:col-span-5 md:col-start-8 space-y-6 leading-[2.2] text-paper/85 text-[15px] md:text-base"
+        >
+          {home.forest.paragraphs.map((p) => <p>{p}</p>)}
+          {
+            home.forest.ctaLabel && home.forest.ctaUrl && (
+              <div class="pt-6">
+                <a
+                  href={home.forest.ctaUrl}
+                  target="_blank"
+                  rel="noopener"
+                  class="font-[var(--font-caption-en)] text-[11px] tracking-[0.25em] uppercase border-b border-paper/60 pb-1 hover:text-ember hover:border-ember transition-colors"
+                >
+                  {home.forest.ctaLabel} →
+                </a>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section id="products" class="bg-paper-alt">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-32 md:py-40">
+        <SectionHeader label="PRODUCTS" heading={home.products.heading} />
+        <p
+          class="max-w-2xl text-[15px] leading-[2] text-ink/80 mb-16 whitespace-pre-line"
+        >
+          {home.products.lead}
+        </p>
+        <Carousel label="商品カルーセル" buttonTop="32%">
+          {
+            products.map((p) => (
+              <div class="carousel-item w-[65%] sm:w-[50%] md:w-[calc((100%-1.5rem)/2.5)] lg:w-[42%]">
+                <ProductCard {...p} />
+              </div>
+            ))
+          }
+        </Carousel>
+        <div class="mt-12 md:mt-16 flex justify-center">
+          <Button
+            href={SITE.external.storeSite}
+            variant="outline"
+            external
+            size="lg"
+          >
+            STORE を見る
+          </Button>
+        </div>
+      </div>
+    </section>
+
+    <!-- News 抜粋 -->
+    <section id="news" class="bg-paper">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-32 md:py-40">
+        <SectionHeader label="NEWS" heading={home.news.heading} />
+        <ul class="border-t border-fog">
+          {
+            newsItems.map((n) => (
+              <li class="border-b border-fog">
+                <a
+                  href={n.href}
+                  class="grid md:grid-cols-[140px,1fr,auto] gap-6 items-baseline py-6 hover:text-moss transition-colors"
+                >
+                  <time class="font-[var(--font-caption-en)] text-[11px] tracking-[0.25em] text-ink/60">
+                    {n.date}
+                  </time>
+                  <span class="text-[15px] md:text-base">{n.title}</span>
+                  <span class="hidden md:inline text-xs text-ink/40">→</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="mt-16 flex justify-center">
+          <Button href="/news" variant="text">
+            すべてのお知らせ →
+          </Button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="bg-paper-alt">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-32 md:py-40">
+        <SectionHeader label="CONTACT" heading={home.contact.heading} />
+        <p
+          class="max-w-2xl text-[15px] leading-[2] text-ink/80 mb-16 whitespace-pre-line"
+        >
+          {home.contact.lead}
+        </p>
+        <ContactForm />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,154 @@
+---
+/**
+ * News 詳細ページ — 投稿型、シンプルで堅牢
+ */
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/design/Nav.astro';
+import Footer from '../../components/design/Footer.astro';
+import Button from '../../components/design/Button.astro';
+import { SITE } from '../../config/site';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news');
+  return news.map((item) => ({
+    params: { slug: item.id },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const { Content } = await render(item);
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+const navLinks = [
+  { label: 'About', href: '/#about' },
+  { label: 'Service', href: '/#service' },
+  { label: 'Works', href: '/works' },
+  { label: 'Products', href: '/#products' },
+  { label: 'Contact', href: '/#contact' },
+];
+---
+
+<BaseLayout title={item.data.title} description={item.data.title}>
+  <Nav brandName={SITE.brandNameEn} links={navLinks} />
+
+  <main class="bg-paper">
+    {/* 記事ヘッダー */}
+    <header class="bg-paper">
+      <div class="mx-auto max-w-[780px] px-4 md:px-0 pt-40 md:pt-48 pb-12 md:pb-16">
+        <p class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-moss">
+          NEWS
+        </p>
+        <time
+          class="mt-5 block font-[var(--font-caption-en)] text-[11px] tracking-[0.3em] text-ink/60"
+        >
+          {formatDate(item.data.date)}
+        </time>
+        <h1
+          class="mt-4 font-[var(--font-display-jp)] text-3xl md:text-5xl leading-[1.4] tracking-tight"
+        >
+          {item.data.title}
+        </h1>
+      </div>
+    </header>
+
+    {/* 記事本文 */}
+    <article
+      class="mx-auto max-w-[780px] px-4 md:px-0 pb-24 md:pb-32 prose-like border-t border-fog pt-12 md:pt-16"
+    >
+      <Content />
+    </article>
+
+    {/* フッター導線 */}
+    <section class="bg-paper-alt">
+      <div
+        class="mx-auto max-w-[1440px] px-4 md:px-24 py-16 md:py-20 flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+      >
+        <Button href="/news" variant="text">
+          お知らせ一覧に戻る
+        </Button>
+        <Button href="/#contact" variant="outline" size="md">
+          お問い合わせ
+        </Button>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .prose-like :global(h2) {
+    font-family: var(--font-display-jp);
+    font-size: 1.375rem;
+    line-height: 1.5;
+    margin-top: 3rem;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.01em;
+  }
+  .prose-like :global(h3) {
+    font-family: var(--font-display-jp);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-like :global(p) {
+    font-size: 15px;
+    line-height: 2.1;
+    color: rgb(17 17 17 / 0.9);
+    margin-bottom: 1.5rem;
+  }
+  .prose-like :global(ul),
+  .prose-like :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .prose-like :global(li) {
+    font-size: 15px;
+    line-height: 2;
+    margin-bottom: 0.25rem;
+  }
+  .prose-like :global(ul) :global(li) {
+    list-style: disc;
+  }
+  .prose-like :global(ol) :global(li) {
+    list-style: decimal;
+  }
+  .prose-like :global(strong) {
+    font-weight: 600;
+  }
+  .prose-like :global(em) {
+    font-style: italic;
+    color: var(--color-moss);
+  }
+  .prose-like :global(a) {
+    color: var(--color-moss);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .prose-like :global(blockquote) {
+    border-left: 2px solid var(--color-fog);
+    padding-left: 1.25rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: rgb(17 17 17 / 0.8);
+  }
+  .prose-like :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--color-fog);
+    margin: 3rem 0;
+  }
+  .prose-like :global(img) {
+    margin: 2rem 0;
+    width: 100%;
+    height: auto;
+  }
+</style>

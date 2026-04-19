@@ -1,0 +1,60 @@
+---
+/**
+ * Button — 4スタイルのCTA（UI 書体は sans-serif）
+ *   primary: 塗りつぶし ink（強いアクション：相談する等）
+ *   outline: 枠線（副次：Service を見る等）
+ *   text:    下線テキスト（リンク扱い）
+ *   ghost:   色なしテキスト（ごく弱いリンク）
+ */
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'outline' | 'text' | 'ghost';
+  size?: 'md' | 'lg';
+  external?: boolean;
+  type?: 'button' | 'submit';
+  class?: string;
+}
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  external = false,
+  type = 'button',
+  class: className = '',
+} = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center gap-3 font-[var(--font-caption-en)] tracking-[0.22em] uppercase transition-all duration-300 select-none';
+
+const sizeCls = size === 'lg' ? 'text-[13px] px-10 py-[18px]' : 'text-xs px-8 py-[14px]';
+
+const variantCls = {
+  primary:
+    'bg-ink text-paper rounded-xs hover:bg-moss',
+  outline:
+    'border border-ink text-ink rounded-xs hover:bg-ink hover:text-paper',
+  text:
+    'text-ink border-b border-ink pb-1 px-0 py-0 !tracking-[0.22em] hover:text-moss hover:border-moss',
+  ghost:
+    'text-ink/70 hover:text-moss',
+}[variant];
+
+const cls = `${base} ${sizeCls} ${variantCls} ${className}`;
+
+const externalProps = external
+  ? { target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+---
+
+{
+  href ? (
+    <a href={href} class={cls} {...externalProps}>
+      <slot />
+      {variant === 'primary' && <span aria-hidden="true" class="inline-block transition-transform group-hover:translate-x-1">→</span>}
+    </a>
+  ) : (
+    <button type={type} class={cls}>
+      <slot />
+    </button>
+  )
+}

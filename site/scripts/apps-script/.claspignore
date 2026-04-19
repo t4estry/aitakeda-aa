@@ -1,0 +1,5 @@
+# clasp push するファイル以外を除外
+**/**
+!appsscript.json
+!*.gs
+!.claspignore

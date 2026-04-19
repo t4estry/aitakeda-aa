@@ -1,0 +1,55 @@
+/**
+ * デザイントークン — docs/DESIGN_SPEC.md §5 に準拠
+ * これ以外のカラー・フォント・スペーシングの追加は禁止（設計承認が必要）
+ */
+@theme {
+  /* ===== Colors ===== */
+  --color-ink: #111111;      /* 本文・見出し */
+  --color-paper: #F6F3EE;    /* 背景：和紙の白（メイン） */
+  --color-paper-alt: #EFECE4; /* 背景：ひと段暗めの和紙（セクション交互） */
+  --color-fog: #D9D4CB;      /* 罫線・区切り */
+  --color-mist: #B8B2A6;     /* 副次的テキスト・キャプション */
+  --color-moss: #2F3A2E;     /* アクセント1：深い苔緑 */
+  --color-ember: #8A5A3B;    /* アクセント2：ヒノキ樹皮 */
+
+  /* ===== Typography ===== */
+  --font-serif-jp: 'Noto Serif JP', 'Shippori Mincho B1', serif;
+  --font-display-jp: 'Shippori Mincho B1', 'Noto Serif JP', serif;
+  --font-display-en: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans-jp: 'Noto Sans JP', system-ui, sans-serif; /* UIラベル・フォーム・ボタン */
+  --font-caption-en: 'Inter', system-ui, sans-serif;
+
+  /* ===== Border Radius ===== */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* ===== Type Scale（DESIGN_SPEC §5.2） ===== */
+  --text-xs: 0.75rem;    /* 12 */
+  --text-sm: 0.875rem;   /* 14 */
+  --text-base: 1rem;     /* 16 */
+  --text-lg: 1.125rem;   /* 18 */
+  --text-2xl: 1.5rem;    /* 24 */
+  --text-4xl: 2.5rem;    /* 40 */
+  --text-6xl: 4rem;      /* 64 */
+  --text-8xl: 6.5rem;    /* 104 */
+
+  /* ===== Spacing（8px ベース、DESIGN_SPEC §5.3） ===== */
+  --spacing-section: 12rem;  /* 192px セクション間 */
+
+  /* ===== Layout ===== */
+  --container-max: 1440px;
+  --container-padding: 6rem;       /* 96px デスクトップ */
+  --container-padding-mobile: 1rem; /* 16px モバイル */
+
+  /* ===== Motion ===== */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-reveal: 400ms;
+
+  /* ===== Breakpoints（Tailwind v4 default と同等、明示） ===== */
+  --breakpoint-sm: 40rem;   /* 640 */
+  --breakpoint-md: 48rem;   /* 768 */
+  --breakpoint-lg: 64rem;   /* 1024 */
+  --breakpoint-xl: 80rem;   /* 1280 */
+  --breakpoint-2xl: 96rem;  /* 1536 */
+}

@@ -1,0 +1,125 @@
+---
+/**
+ * Works 一覧ページ — flyhyer.com 風のヒーロー型ヘッダー＋CTA構成
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/design/Nav.astro';
+import Footer from '../../components/design/Footer.astro';
+import WorkCard from '../../components/design/WorkCard.astro';
+import Button from '../../components/design/Button.astro';
+import { SITE } from '../../config/site';
+
+const navLinks = [
+  { label: 'About', href: '/#about' },
+  { label: 'Service', href: '/#service' },
+  { label: 'Works', href: '/works' },
+  { label: 'Products', href: '/#products' },
+  { label: 'Contact', href: '/#contact' },
+];
+
+const works = (await getCollection('works')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// カテゴリ別集計（サブ情報として表示）
+const categoryCounts = works.reduce<Record<string, number>>((acc, w) => {
+  acc[w.data.category] = (acc[w.data.category] || 0) + 1;
+  return acc;
+}, {});
+---
+
+<BaseLayout title="Works" description="AI TAKEDA のこれまでの調香事例">
+  <Nav brandName={SITE.brandNameEn} links={navLinks} />
+
+  <main>
+    {/* ページヒーロー */}
+    <section class="bg-paper">
+      <div
+        class="mx-auto max-w-[1440px] px-4 md:px-24 pt-40 md:pt-48 pb-24 md:pb-32"
+      >
+        <p class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-moss">
+          WORKS
+        </p>
+        <h1
+          class="mt-6 font-[var(--font-display-jp)] text-4xl md:text-7xl leading-[1.3] tracking-tight max-w-[14ch]"
+        >
+          これまでの調香。
+        </h1>
+        <div
+          class="mt-16 grid md:grid-cols-12 gap-10 md:gap-12 border-t border-fog pt-12"
+        >
+          <p class="md:col-span-7 text-[15px] md:text-base leading-[2.1] text-ink/80">
+            法人向けのオリジナル調香、商品開発、地域での講演など、これまでお引き受けした事例をご紹介します。守秘保持の関係でクライアント名を匿名表記とする場合があります。
+          </p>
+          <dl
+            class="md:col-span-4 md:col-start-9 grid grid-cols-[auto,1fr] gap-x-6 gap-y-3 self-start"
+          >
+            <dt class="font-[var(--font-caption-en)] text-[11px] tracking-[0.25em] uppercase text-ember">
+              Total
+            </dt>
+            <dd class="font-[var(--font-caption-en)] text-sm tracking-wider">
+              {String(works.length).padStart(2, '0')} Projects
+            </dd>
+            {
+              Object.entries(categoryCounts).map(([cat, n]) => (
+                <>
+                  <dt class="font-[var(--font-sans-jp)] text-[12px] tracking-wider text-ink/60">
+                    {cat}
+                  </dt>
+                  <dd class="font-[var(--font-caption-en)] text-sm tracking-wider text-ink/70">
+                    {String(n).padStart(2, '0')}
+                  </dd>
+                </>
+              ))
+            }
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    {/* Works グリッド */}
+    <section class="bg-paper-alt">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-24 md:py-32">
+        <div class="grid md:grid-cols-3 gap-12 md:gap-16">
+          {
+            works.map((w) => (
+              <WorkCard
+                cover={w.data.cover}
+                category={w.data.category}
+                title={w.data.title}
+                client={w.data.client}
+                year={w.data.year}
+                summary={w.data.summary}
+                href={`/works/${w.id}`}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* 下部 CTA */}
+    <section class="bg-paper">
+      <div
+        class="mx-auto max-w-[1440px] px-4 md:px-24 py-24 md:py-32 flex flex-col md:flex-row md:items-center md:justify-between gap-10"
+      >
+        <div>
+          <p class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-moss">
+            ENQUIRY
+          </p>
+          <h2 class="mt-4 font-[var(--font-display-jp)] text-2xl md:text-4xl leading-[1.5] max-w-[20ch]">
+            同じような調香のご相談も、歓迎します。
+          </h2>
+        </div>
+        <div>
+          <Button href="/#contact" variant="primary" size="lg">
+            相談する
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

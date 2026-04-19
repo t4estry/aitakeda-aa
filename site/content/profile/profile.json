@@ -1,0 +1,20 @@
+{
+  "name": "武田 愛",
+  "nameEn": "AI TAKEDA",
+  "jobTitle": "調香師／株式会社武田林業 調香部門",
+  "portrait": "https://picsum.photos/seed/profile/600/800?grayscale",
+  "portraitNote": "Portrait will be replaced in Phase 4",
+  "bioParagraphs": [
+    "愛媛県喜多郡内子町生まれ。株式会社武田林業に勤務する林業家の家で育ち、山の素材と生活を近くに感じながら調香の道へ。IAPA（International Aroma Perfume Association）所属。",
+    "「森の呼吸を、調香する」をテーマに、ホテル・オフィス・ブランドの空間香／商品香の設計を手がける。自社の山から未利用材を集め、自ら蒸留した精油を中心に、季節と目的に合わせて香りを組む。"
+  ],
+  "affiliations": [
+    "IAPA（International Aroma Perfume Association）所属"
+  ],
+  "career": [
+    { "year": "YYYY", "text": "愛媛県喜多郡内子町 生まれ" },
+    { "year": "YYYY", "text": "IAPA（International Aroma Perfume Association）登録" },
+    { "year": "YYYY", "text": "AI TAKEDA として活動開始" },
+    { "year": "YYYY", "text": "[TBD] 受賞・登壇・寄稿" }
+  ]
+}

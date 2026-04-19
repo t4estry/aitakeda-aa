@@ -1,0 +1,310 @@
+---
+/**
+ * Works 詳細ページ — flyhyer.com 風の堅牢な投稿型レイアウト
+ * MDX 本文がどう膨らんでも崩れないよう prose-like を拡張
+ */
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/design/Nav.astro';
+import Footer from '../../components/design/Footer.astro';
+import Button from '../../components/design/Button.astro';
+import { SITE } from '../../config/site';
+
+export async function getStaticPaths() {
+  const works = await getCollection('works');
+  return works.map((work) => ({
+    params: { slug: work.id },
+    props: { work },
+  }));
+}
+
+const { work } = Astro.props;
+const { Content } = await render(work);
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+const navLinks = [
+  { label: 'About', href: '/#about' },
+  { label: 'Service', href: '/#service' },
+  { label: 'Works', href: '/works' },
+  { label: 'Products', href: '/#products' },
+  { label: 'Contact', href: '/#contact' },
+];
+
+// 関連 Works（自分を除く最新2件）
+const related = (await getCollection('works'))
+  .filter((w) => w.id !== work.id)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 2);
+---
+
+<BaseLayout title={work.data.title} description={work.data.summary}>
+  <Nav brandName={SITE.brandNameEn} links={navLinks} overlay={true} />
+
+  <main>
+    {/* ページヒーロー：フルワイド画像 + センター配置タイトル */}
+    <header class="relative min-h-[70vh] overflow-hidden">
+      <img
+        src={work.data.cover}
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 w-full h-full object-cover grayscale"
+      />
+      <div class="absolute inset-0 bg-ink/45" aria-hidden="true"></div>
+      <div
+        class="relative z-10 min-h-[70vh] mx-auto max-w-[1440px] px-4 md:px-24 flex flex-col justify-end pb-20 md:pb-28"
+      >
+        <p class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-ember">
+          WORKS ／ {work.data.category}
+        </p>
+        <h1
+          class="mt-5 font-[var(--font-display-jp)] text-3xl md:text-6xl leading-[1.3] text-paper max-w-[20ch]"
+        >
+          {work.data.title}
+        </h1>
+      </div>
+    </header>
+
+    {/* メタ情報ストリップ */}
+    <section class="bg-paper border-b border-fog">
+      <div
+        class="mx-auto max-w-[1440px] px-4 md:px-24 py-6 md:py-8 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12"
+      >
+        <div>
+          <dt class="font-[var(--font-caption-en)] text-[10px] tracking-[0.3em] uppercase text-ink/50">
+            Category
+          </dt>
+          <dd class="mt-2 text-sm">{work.data.category}</dd>
+        </div>
+        {
+          work.data.year && (
+            <div>
+              <dt class="font-[var(--font-caption-en)] text-[10px] tracking-[0.3em] uppercase text-ink/50">
+                Year
+              </dt>
+              <dd class="mt-2 font-[var(--font-caption-en)] text-sm tracking-wider">
+                {work.data.year}
+              </dd>
+            </div>
+          )
+        }
+        {
+          work.data.client && (
+            <div>
+              <dt class="font-[var(--font-caption-en)] text-[10px] tracking-[0.3em] uppercase text-ink/50">
+                Client
+              </dt>
+              <dd class="mt-2 text-sm">{work.data.client}</dd>
+            </div>
+          )
+        }
+        <div>
+          <dt class="font-[var(--font-caption-en)] text-[10px] tracking-[0.3em] uppercase text-ink/50">
+            Date
+          </dt>
+          <dd class="mt-2 font-[var(--font-caption-en)] text-sm tracking-wider text-ink/70">
+            {formatDate(work.data.date)}
+          </dd>
+        </div>
+      </div>
+    </section>
+
+    {/* 本文 */}
+    <article class="bg-paper">
+      <div
+        class="mx-auto max-w-[780px] px-4 md:px-6 py-24 md:py-32 prose-like"
+      >
+        <p class="lead">{work.data.summary}</p>
+        <Content />
+
+        {
+          work.data.tags && (
+            <div class="not-prose mt-16 pt-8 border-t border-fog flex flex-wrap gap-3">
+              {work.data.tags.map((t) => (
+                <span class="font-[var(--font-caption-en)] text-[11px] tracking-[0.2em] uppercase text-ink/60 border border-ink/25 rounded-xs px-3 py-1">
+                  {t}
+                </span>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </article>
+
+    {/* 関連 Works */}
+    {
+      related.length > 0 && (
+        <section class="bg-paper-alt">
+          <div class="mx-auto max-w-[1440px] px-4 md:px-24 py-24 md:py-32">
+            <div class="mb-12 md:mb-16 flex items-baseline justify-between">
+              <div>
+                <p class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-moss">
+                  RELATED WORKS
+                </p>
+                <h2 class="mt-4 font-[var(--font-display-jp)] text-2xl md:text-4xl leading-[1.5]">
+                  ほかの事例も。
+                </h2>
+              </div>
+              <a
+                href="/works"
+                class="hidden md:inline-flex font-[var(--font-caption-en)] text-xs tracking-[0.25em] uppercase text-ink border-b border-ink pb-1 hover:text-moss hover:border-moss transition-colors"
+              >
+                すべて見る →
+              </a>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12 md:gap-16">
+              {related.map((r) => (
+                <a href={`/works/${r.id}`} class="group block">
+                  <div class="aspect-[16/10] overflow-hidden bg-fog">
+                    <img
+                      src={r.data.cover}
+                      alt={r.data.title}
+                      loading="lazy"
+                      class="w-full h-full object-cover grayscale transition-transform duration-[1200ms] ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
+                    />
+                  </div>
+                  <div class="mt-5 flex items-baseline justify-between font-[var(--font-caption-en)] text-[11px] tracking-[0.3em] uppercase">
+                    <span class="text-moss">{r.data.category}</span>
+                    {r.data.year && <span class="text-ink/50">{r.data.year}</span>}
+                  </div>
+                  <h3 class="mt-3 font-[var(--font-display-jp)] text-xl md:text-2xl leading-[1.4] group-hover:text-moss transition-colors">
+                    {r.data.title}
+                  </h3>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {/* 下部 CTA */}
+    <section class="bg-paper">
+      <div
+        class="mx-auto max-w-[1440px] px-4 md:px-24 py-24 md:py-32 flex flex-col md:flex-row md:items-center md:justify-between gap-10"
+      >
+        <div>
+          <p class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-moss">
+            ENQUIRY
+          </p>
+          <h2 class="mt-4 font-[var(--font-display-jp)] text-2xl md:text-3xl leading-[1.5] max-w-[22ch]">
+            似た調香のご相談も、歓迎します。
+          </h2>
+        </div>
+        <div class="flex items-center gap-8">
+          <Button href="/works" variant="text">
+            一覧に戻る
+          </Button>
+          <Button href="/#contact" variant="primary" size="lg">
+            相談する
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .prose-like .lead {
+    font-family: var(--font-display-jp);
+    font-size: 1.375rem;
+    line-height: 1.9;
+    color: var(--color-ink);
+    border-left: 2px solid var(--color-moss);
+    padding-left: 1.5rem;
+    margin-bottom: 3rem;
+    letter-spacing: -0.005em;
+  }
+  .prose-like :global(h2) {
+    font-family: var(--font-display-jp);
+    font-size: 1.5rem;
+    line-height: 1.5;
+    margin-top: 3.5rem;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.01em;
+  }
+  .prose-like :global(h3) {
+    font-family: var(--font-display-jp);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-like :global(h4) {
+    font-family: var(--font-display-jp);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-like :global(p) {
+    font-size: 15px;
+    line-height: 2.1;
+    color: rgb(17 17 17 / 0.9);
+    margin-bottom: 1.5rem;
+  }
+  .prose-like :global(ul),
+  .prose-like :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .prose-like :global(li) {
+    font-size: 15px;
+    line-height: 2;
+    margin-bottom: 0.3rem;
+  }
+  .prose-like :global(ul) :global(li) {
+    list-style: disc;
+  }
+  .prose-like :global(ol) :global(li) {
+    list-style: decimal;
+  }
+  .prose-like :global(strong) {
+    font-weight: 600;
+  }
+  .prose-like :global(em) {
+    font-style: italic;
+    color: var(--color-moss);
+  }
+  .prose-like :global(a) {
+    color: var(--color-moss);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    transition: color 0.2s;
+  }
+  .prose-like :global(a:hover) {
+    color: var(--color-ink);
+  }
+  .prose-like :global(blockquote) {
+    border-left: 2px solid var(--color-fog);
+    padding-left: 1.25rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: rgb(17 17 17 / 0.8);
+  }
+  .prose-like :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--color-fog);
+    margin: 3rem 0;
+  }
+  .prose-like :global(img) {
+    margin: 2rem 0;
+    width: 100%;
+    height: auto;
+  }
+  .prose-like :global(code) {
+    font-family: ui-monospace, monospace;
+    font-size: 0.875em;
+    background: var(--color-paper-alt);
+    padding: 0.125rem 0.375rem;
+    border-radius: 2px;
+  }
+</style>

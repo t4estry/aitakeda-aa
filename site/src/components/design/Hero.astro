@@ -1,0 +1,156 @@
+---
+/**
+ * Hero — flyhyer.com 風：背景画像に静かなテキスト。
+ * 画像なしモード（backgroundImage 未指定）でもパッド+tagline+headlineの骨格は維持。
+ *
+ * スクロールで「風がなびくように消えていく」演出：
+ *   - 背景画像：右へドリフト + 軽いスケールアップ + ブラー + フェード
+ *   - テキスト：わずかに上昇 + 遅めのフェード（主役として残る時間を長く）
+ * prefers-reduced-motion で完全停止。
+ */
+interface Props {
+  tagline: string;
+  headline: string;
+  sub: string;
+  backgroundImage?: string;
+  overlay?: 'none' | 'soft' | 'strong';
+}
+const {
+  tagline,
+  headline,
+  sub,
+  backgroundImage,
+  overlay = 'soft',
+} = Astro.props;
+
+const headlineLines = headline.split('\n');
+const subLines = sub.split('\n');
+
+const overlayOpacity = {
+  none: 0,
+  soft: 0.35,
+  strong: 0.55,
+}[overlay];
+
+const hasImage = Boolean(backgroundImage);
+const textColorClass = hasImage ? 'text-paper' : 'text-ink';
+const taglineColorClass = hasImage ? 'text-paper/80' : 'text-moss';
+---
+
+<section
+  class={`hero-root relative overflow-hidden ${hasImage ? 'min-h-[88vh]' : ''}`}
+  data-component="Hero"
+>
+  {
+    hasImage && (
+      <>
+        <div class="hero-bg absolute inset-0 -z-20 will-change-transform">
+          <img
+            src={backgroundImage}
+            alt=""
+            aria-hidden="true"
+            class="w-full h-full object-cover grayscale"
+          />
+        </div>
+        <div
+          class="hero-overlay absolute inset-0 -z-10 bg-ink will-change-[opacity]"
+          style={`opacity: ${overlayOpacity};`}
+          aria-hidden="true"
+        />
+      </>
+    )
+  }
+
+  <div
+    class={`hero-text relative will-change-transform mx-auto max-w-[1440px] px-4 md:px-24 ${hasImage ? 'pt-40 pb-32 md:pt-56 md:pb-40 flex flex-col justify-end min-h-[88vh]' : 'py-32 md:py-48'}`}
+  >
+    <p
+      class={`font-[var(--font-caption-en)] text-xs md:text-sm tracking-[0.35em] uppercase ${taglineColorClass}`}
+    >
+      {tagline}
+    </p>
+    <h1
+      class={`mt-8 md:mt-10 font-[var(--font-display-jp)] text-5xl md:text-7xl leading-[1.25] tracking-tight ${textColorClass}`}
+    >
+      {headlineLines.map((line, i) => (
+        <>
+          {line}
+          {i < headlineLines.length - 1 && <br />}
+        </>
+      ))}
+    </h1>
+    <p
+      class={`mt-10 md:mt-12 max-w-xl text-sm md:text-base leading-[2.1] ${hasImage ? 'text-paper/85' : 'text-ink/85'}`}
+    >
+      {subLines.map((line, i) => (
+        <>
+          {line}
+          {i < subLines.length - 1 && <br />}
+        </>
+      ))}
+    </p>
+  </div>
+</section>
+
+{hasImage && (
+  <script is:inline>
+    (() => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const hero = document.querySelector('[data-component="Hero"]');
+      if (!hero) return;
+      const bg = hero.querySelector('.hero-bg');
+      const overlay = hero.querySelector('.hero-overlay');
+      const text = hero.querySelector('.hero-text');
+      if (!bg) return;
+
+      const baseOverlay = overlay ? parseFloat(overlay.style.opacity) || 0.35 : 0;
+
+      let ticking = false;
+      function update() {
+        const rect = hero.getBoundingClientRect();
+        const vh = window.innerHeight;
+        // 0 = hero top at viewport top, 1 = hero bottom at viewport top
+        const denom = Math.max(1, rect.height * 0.85);
+        const progress = Math.max(0, Math.min(1, -rect.top / denom));
+
+        // 背景画像：右へドリフト + スケールアップ + ブラー + フェード
+        const tx = progress * 80;              // 右に80px流れる
+        const ty = -progress * 30;             // 軽く上昇
+        const scale = 1 + progress * 0.08;     // 微妙にズームアウト感
+        const blur = progress * 8;             // ブラー0→8px
+        const opacity = 1 - progress * 0.95;   // 最終5%まで残す
+
+        bg.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${scale})`;
+        bg.style.filter = `blur(${blur.toFixed(1)}px)`;
+        bg.style.opacity = opacity.toFixed(3);
+
+        // オーバーレイも progress と連動して薄くなる
+        if (overlay) {
+          overlay.style.opacity = (baseOverlay * (1 - progress * 0.5)).toFixed(3);
+        }
+
+        // テキスト：わずかに上昇 + 遅めのフェード（主役として残る）
+        if (text) {
+          text.style.transform = `translate3d(0, ${-progress * 40}px, 0)`;
+          text.style.opacity = (1 - progress * 0.6).toFixed(3);
+        }
+
+        ticking = false;
+      }
+
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (!ticking) {
+            requestAnimationFrame(update);
+            ticking = true;
+          }
+        },
+        { passive: true }
+      );
+      window.addEventListener('resize', update);
+      update();
+    })();
+  </script>
+)}

@@ -1,0 +1,38 @@
+/**
+ * Global stylesheet — Tailwind v4 + design tokens を読み込む入口
+ * Google Fonts は BaseLayout.astro の <link> で読み込む（CSS @import はパフォーマンス劣化のため不使用）
+ */
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* Base */
+html {
+  font-family: var(--font-serif-jp);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  font-feature-settings: 'palt';
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  line-height: 1.8;
+}
+
+/* prefers-reduced-motion — DESIGN_SPEC §5.4 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-moss);
+  color: var(--color-paper);
+}

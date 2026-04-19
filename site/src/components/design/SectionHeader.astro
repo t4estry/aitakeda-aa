@@ -1,0 +1,27 @@
+---
+interface Props {
+  label: string; // 英文小見出し: PHILOSOPHY / SERVICE / WORKS ...
+  heading: string; // 和文見出し
+  id?: string; // アンカーID
+  align?: 'left' | 'center';
+  number?: string; // "01 / 05" のような装飾番号（任意）
+}
+const { label, heading, id, align = 'left', number } = Astro.props;
+const alignClass = align === 'center' ? 'text-center' : 'text-left';
+---
+
+<header id={id} class={`mb-16 md:mb-20 ${alignClass}`}>
+  <div class="flex items-baseline gap-6">
+    <p class="font-[var(--font-caption-en)] text-[11px] tracking-[0.35em] uppercase text-moss">
+      {label}
+    </p>
+    {number && (
+      <span class="font-[var(--font-caption-en)] text-[11px] tracking-[0.25em] text-ink/40">
+        {number}
+      </span>
+    )}
+  </div>
+  <h2 class="mt-5 font-[var(--font-display-jp)] text-3xl md:text-5xl leading-[1.45] tracking-tight">
+    {heading}
+  </h2>
+</header>

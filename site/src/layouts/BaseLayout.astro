@@ -15,6 +15,10 @@ const {
 } = Astro.props;
 
 const fullTitle = title === SITE.brandName ? title : `${title} ｜ ${SITE.brandName}`;
+
+// プレビュー段階は検索エンジンに拾われないよう noindex。本番公開時に env で切り替え可能。
+// 環境変数 PUBLIC_SITE_PUBLIC=true でインデックス許可に切り替わる。
+const allowIndexing = import.meta.env.PUBLIC_SITE_PUBLIC === 'true';
 ---
 
 <!doctype html>
@@ -25,6 +29,11 @@ const fullTitle = title === SITE.brandName ? title : `${title} ｜ ${SITE.brandN
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+
+    {/* プレビュー段階：検索エンジン除外。PUBLIC_SITE_PUBLIC=true で解除 */}
+    {!allowIndexing && (
+      <meta name="robots" content="noindex, nofollow" />
+    )}
 
     <!-- Google Fonts — DESIGN_SPEC §5.2 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

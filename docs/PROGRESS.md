@@ -94,6 +94,9 @@ site/
 - [x] 2026-04-19 Phase 6c 検証: フォーム DOM 構造（9 inputs + submit）、reCAPTCHA スクリプト動的ロード、grecaptcha.execute() からトークン取得（2169 chars）まで成功。実送信の E2E テストはユーザー手動で実施予定
 - [x] 2026-04-19 Phase 6 E2E テスト: 本送信が全通し成功（管理者通知＋自動返信＋スプシ記録）。メール文面調整（reCAPTCHA スコア行削除、送信者宛に所属名冒頭付与、屋号 `AITAKEDA Aromatic Architects` 採用）は `mail.gs` 反映済。`clasp push` + 新バージョンデプロイの UI 手順はユーザー実行
 - [x] 2026-04-19 問い合わせログスプシを共有ドライブに移動＋名前を **`AAA_WEB問い合わせログ`** に変更。ID 不変のため Apps Script 側の修正は不要
+- [x] 2026-04-19 Phase 7-0: GitHub リポジトリ `t4estry/aitakeda-aa`（Public）作成 + 2コミット push 済
+- [x] 2026-04-19 Phase 7-0: Cloudflare Pages プレビューデプロイ成功（`https://aitakeda-aa.pages.dev`、noindex 有効）
+- [x] 2026-04-19 Phase 7-0: 本番公開ドメインを `aroma.4est.co.jp`（4est.co.jp のサブドメイン）に決定。お名前.com で DNS 設定、Cloudflare Pages の Custom Domain に追加予定。将来独自ドメインに移行する場合は 301 リダイレクトで SEO 継承
 - [x] **Carousel 導入**（Phase 5a中の寄り道）：Works と Products を水平スライダー化
   - `Carousel.astro`（CSS scroll-snap + JS for buttons/counter）
   - Works: モバイル 1枚 + peek ／ md 2枚 ／ **lg 1.25枚**

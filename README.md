@@ -50,6 +50,13 @@ npm run dev:tina     # Astro + Tina 管理画面を同時起動
 - http://localhost:4321/ — 公開ページ
 - http://localhost:4321/admin/index.html — Tina 管理画面（ローカルモード）
 
+## 公開 URL
+
+| 環境 | URL | 状態 |
+|---|---|---|
+| プレビュー（Cloudflare 自動発行） | https://aitakeda-aa.pages.dev | noindex 有効 |
+| 本番（4est.co.jp サブドメイン） | https://aroma.4est.co.jp | DNS 設定後に公開予定 |
+
 ## 詳細設計
 
 `docs/` 配下の `.md` を参照。特に `PROGRESS.md` に現在の実装状況を記録。

@@ -261,4 +261,5 @@ https://docs.google.com/spreadsheets/d/1d2nphl4C-JMQ74DzsGc3n1DusIcSNaO5YJw9q48T
 
 - [x] ~~スプシのファイル名~~ → `AAA_WEB問い合わせログ` で確定
 - [x] ~~reCAPTCHA 登録ドメイン~~ → 暫定 `localhost` / 本番確定後追加予定
+  - 2026-04-19：本番ドメイン `aroma.4est.co.jp` を reCAPTCHA 管理画面に追加予定
 - [x] ~~送信元の表示名~~ → `AITAKEDA Aromatic Architects`

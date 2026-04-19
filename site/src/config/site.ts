@@ -9,8 +9,9 @@ export const SITE = {
   brandNameEn: 'AI TAKEDA',
   tagline: 'AROMATIC DESIGN FROM THE FOREST',
 
-  // ドメイン未定。開発中は Cloudflare Pages の自動サブドメインに差し替え可。
-  url: 'https://ai-takeda.example',
+  // 本番 URL：4est.co.jp のサブドメイン `aroma` として運用
+  // （将来的に独自ドメイン移行する場合は 301 リダイレクトで対応）
+  url: 'https://aroma.4est.co.jp',
 
   // 問い合わせフォームの送信先（サイトには非表示）
   contactEmail: 'a.takeda@4est.co.jp',

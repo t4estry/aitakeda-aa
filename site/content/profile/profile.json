@@ -1,20 +1,31 @@
 {
   "name": "武田 愛",
   "nameEn": "AI TAKEDA",
-  "jobTitle": "調香師／株式会社武田林業 調香部門",
-  "portrait": "https://picsum.photos/seed/profile/600/800?grayscale",
+  "jobTitle": "アロマ調香デザイナー®︎／AI TAKEDA Aromatic Architects 主宰／株式会社武田林業 取締役",
+  "portrait": "/imageshttps://picsum.photos/seed/profile/600/800?grayscale",
   "portraitNote": "Portrait will be replaced in Phase 4",
   "bioParagraphs": [
-    "愛媛県喜多郡内子町生まれ。株式会社武田林業に勤務する林業家の家で育ち、山の素材と生活を近くに感じながら調香の道へ。IAPA（International Aroma Perfume Association）所属。",
-    "「森の呼吸を、調香する」をテーマに、ホテル・オフィス・ブランドの空間香／商品香の設計を手がける。自社の山から未利用材を集め、自ら蒸留した精油を中心に、季節と目的に合わせて香りを組む。"
+    "愛媛県内子町にて、林業の現場から「森の価値」を再構築する香りの設計士。\n森林資源を単なる素材ではなく、人の記憶に刻まれる「体験」へと昇華させる活動に向き合う。\n\n自ら蒸留した天然精油を用い、建築空間やブランドの物語に基づいた香りの設計を行うほか、個人のためのパーソナル調香、五感を研ぎ澄ますワークショップの主宰、プロダクト開発（OEM）の監修まで多角的に手がける。\n\n大切にしているのは、森で感じるあの凛とした空気の質感を空間に持ち込むこと。\n訪れる人の足取りやその場所の目的、あるいは使い手の心境に合わせ、香りの濃度と広がりを丁寧に整える。\n主張するのではなく、そこにあるのが当たり前だと思えるような自然な空気の巡りを設計し、香りを通して人と森、そして未来をつなぐ。"
   ],
   "affiliations": [
-    "IAPA（International Aroma Perfume Association）所属"
+    ""
   ],
   "career": [
-    { "year": "YYYY", "text": "愛媛県喜多郡内子町 生まれ" },
-    { "year": "YYYY", "text": "IAPA（International Aroma Perfume Association）登録" },
-    { "year": "YYYY", "text": "AI TAKEDA として活動開始" },
-    { "year": "YYYY", "text": "[TBD] 受賞・登壇・寄稿" }
+    {
+      "year": "YYYY",
+      "text": "愛媛県喜多郡内子町 生まれ"
+    },
+    {
+      "year": "YYYY",
+      "text": "IAPA（International Aroma Perfume Association）登録"
+    },
+    {
+      "year": "YYYY",
+      "text": "AI TAKEDA として活動開始"
+    },
+    {
+      "year": "YYYY",
+      "text": "[TBD] 受賞・登壇・寄稿"
+    }
   ]
 }

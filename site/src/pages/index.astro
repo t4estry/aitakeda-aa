@@ -148,20 +148,22 @@ const navLinks = [
               {profile.bioParagraphs.map((p) => <p>{p}</p>)}
             </div>
 
-            <dl class="mt-12 border-t border-fog divide-y divide-fog">
-              {
-                profile.career.map((c) => (
-                  <div class="grid grid-cols-[auto,1fr] gap-8 py-5">
-                    <dt class="font-[var(--font-caption-en)] text-[11px] tracking-[0.25em] uppercase text-ember">
-                      {c.year}
-                    </dt>
-                    <dd class="font-[var(--font-sans-jp)] text-sm leading-[1.8]">
-                      {c.text}
-                    </dd>
-                  </div>
-                ))
-              }
-            </dl>
+            {
+              profile.career && profile.career.length > 0 && (
+                <dl class="mt-12 border-t border-fog divide-y divide-fog">
+                  {profile.career.map((c) => (
+                    <div class="grid grid-cols-[auto,1fr] gap-8 py-5">
+                      <dt class="font-[var(--font-caption-en)] text-[11px] tracking-[0.25em] uppercase text-ember">
+                        {c.year}
+                      </dt>
+                      <dd class="font-[var(--font-sans-jp)] text-sm leading-[1.8]">
+                        {c.text}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )
+            }
           </div>
         </div>
       </div>

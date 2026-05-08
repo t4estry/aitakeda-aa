@@ -3,11 +3,40 @@
 > Claude Code は作業開始時に本ファイルを読み、作業終了時に必ず追記する。
 > 「与件を忘れない」ための一次メモリ。セッションごとに現在地を明示。
 
-最終更新：2026-04-18
+最終更新：2026-04-20
+
+📁 **ローカルパス変更**：`~/Desktop/ai-takeda-site/` → **`~/Documents/code/ai-takeda-site/`**
 
 ---
 
 ## Now（現在位置）
+
+**Phase 0〜7-1 完了 → 武田愛さんレビュー待ち**
+
+### 🌲 公開状況
+- 本番 URL：https://aroma.4est.co.jp（noindex 中、Google 検索除外）
+- Cloudflare 自動 URL：https://aitakeda-aa.pages.dev
+- Tina Cloud admin：https://aroma.4est.co.jp/admin/index.html
+- GitHub repo：https://github.com/t4estry/aitakeda-aa（Public、Private 化検討中）
+
+### 🟢 完成・稼働中の機能
+- Top 長尺ページ（9 セクション、Carousel 含む）+ Works/News 一覧と詳細
+- ScentParticles（カーソル連動の分子ネットワーク表現）
+- Hero 風なびきスクロールエフェクト
+- Contact フォーム → Gmail 2 通送信 + Google スプシログ（reCAPTCHA v3）
+- Tina CMS（Cloud 接続済、武田惇奨さんが本番から編集可能）
+
+### 📝 残作業
+1. **Phase 4**：実素材差替（Hero / Profile / Works / 商品の写真、実事例3〜5件）— 武田愛さん素材待ち
+2. **noindex 解除**：Cloudflare 環境変数 `PUBLIC_SITE_PUBLIC=true` 追加で公開検索可
+3. **Private 化判断**：DX 支援者として推奨だが、現状 Public で動作中
+4. 必要なら EDIT_GUIDE.md（武田愛さん向け Tina 操作マニュアル）
+
+→ 次セッション開始時は `docs/SESSION_RESUME.md` を最初に読むこと。
+
+---
+
+## 過去のフェーズログ
 
 **Phase 3 シリーズ完了 — Phase 5（Tina 拡張）着手前**
 
@@ -90,6 +119,9 @@ site/
 - [x] 2026-04-19 Phase 6b 事前準備: Google Sheets、reCAPTCHA v3 登録、clasp login 完了
 - [x] 2026-04-19 Phase 6b デプロイ: `clasp create` → `clasp push` → Script Properties 設定 → Web App 配備。URL: `https://script.google.com/macros/s/AKfycbxT7QY6DdqT4sdkyXOPlkqc7HMDjKBiOvmiR5vAbl4TcRkzudzcYODqs7LyKDO2J6U/exec`。ヘルスチェック成功
 - [x] 2026-04-19 屋号（仮）確定：`AITAKEDA Aromatic Architects`（短縮名 `AITAKEDA`）
+- [x] 2026-04-19 **Phase 7-0 完了**：GitHub `t4estry/aitakeda-aa`（Public）作成 → Cloudflare Pages 連携 → カスタムドメイン `aroma.4est.co.jp` 配備（DNS は お名前.com 内、CNAME 1行追加のみ、Google Workspace メール無影響）。SSL 自動発行、HTTP/2、CDN
+- [x] 2026-04-19 **Phase 7-1 完了**：Tina Cloud 連携。`tinacms build` の `--skip-cloud-checks` フラグで初回ビルド回避。何度か詰まったが**「Path to Tina Config」を `site/tina` → `site` に変更**することで Tina Cloud がブランチを認識→admin 動作確認。新 Client ID `9c0ec3e0-...` / Token `558768...` を Cloudflare Pages 環境変数 + ローカル `.env` に設定済
+- [x] 2026-04-19 Notion タスク TSK-15181 登録：武田愛さんへ校正・素材差替レビュー依頼（PJ「26調香デザイン」）
 - [x] 2026-04-19 Phase 6c: `ContactForm.astro` を刷新。reCAPTCHA v3 動的ロード、honeypot field、fetch POST（text/plain で CORS プリフライト回避）、成功/失敗の inline ステータス表示、送信中ボタン制御。`site/src/config/site.ts` に `contactEndpoint` と `recaptchaSiteKey` を一元化
 - [x] 2026-04-19 Phase 6c 検証: フォーム DOM 構造（9 inputs + submit）、reCAPTCHA スクリプト動的ロード、grecaptcha.execute() からトークン取得（2169 chars）まで成功。実送信の E2E テストはユーザー手動で実施予定
 - [x] 2026-04-19 Phase 6 E2E テスト: 本送信が全通し成功（管理者通知＋自動返信＋スプシ記録）。メール文面調整（reCAPTCHA スコア行削除、送信者宛に所属名冒頭付与、屋号 `AITAKEDA Aromatic Architects` 採用）は `mail.gs` 反映済。`clasp push` + 新バージョンデプロイの UI 手順はユーザー実行

@@ -76,12 +76,15 @@ const profile = defineCollection({
     portraitNote: z.string().optional(),
     bioParagraphs: z.array(z.string()),
     affiliations: z.array(z.string()).optional(),
-    career: z.array(
-      z.object({
-        year: z.string(),
-        text: z.string(),
-      })
-    ),
+    career: z
+      .array(
+        z.object({
+          year: z.string(),
+          text: z.string(),
+        })
+      )
+      .optional()
+      .default([]),
   }),
 });
 
